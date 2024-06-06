@@ -7,8 +7,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const responsesContainer = document.getElementById('responses-container');
 
     const adminUsername = 'admin';
-    const adminPassword = 'admin';
+    const adminPassword = 'password';
 
+    // Función para manejar el inicio de sesión
     if (loginForm) {
         loginForm.addEventListener('submit', function(event) {
             event.preventDefault();
@@ -33,25 +34,33 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // Función para manejar la adición de campos en el formulario de admin
     if (addFieldForm) {
         addFieldForm.addEventListener('submit', function(event) {
             event.preventDefault();
 
             const fieldName = document.getElementById('field-name').value;
-            const newField = document.createElement('input');
-            newField.type = 'text';
-            newField.name = fieldName;
-            newField.placeholder = fieldName;
+            if (fieldName) {
+                const newField = document.createElement('input');
+                newField.type = 'text';
+                newField.name = fieldName;
+                newField.placeholder = fieldName;
 
-            let fields = JSON.parse(localStorage.getItem('fields')) || [];
-            fields.push(fieldName);
-            localStorage.setItem('fields', JSON.stringify(fields));
+                let fields = JSON.parse(localStorage.getItem('fields')) || [];
+                fields.push(fieldName);
+                localStorage.setItem('fields', JSON.stringify(fields));
 
-            userForm.appendChild(newField);
-            formMessage.innerText = `Campo "${fieldName}" agregado.`;
+                if (userForm) {
+                    userForm.appendChild(newField);
+                }
+
+                formMessage.innerText = `Campo "${fieldName}" agregado.`;
+                document.getElementById('field-name').value = ''; // Clear input after adding
+            }
         });
     }
 
+    // Función para manejar el envío del formulario de usuario
     if (userForm) {
         userForm.addEventListener('submit', function(event) {
             event.preventDefault();
@@ -80,6 +89,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // Función para mostrar las respuestas guardadas
     if (responsesContainer) {
         fetch('responses.txt')
             .then(response => response.text())
