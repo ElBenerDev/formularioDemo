@@ -5,6 +5,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const loginMessage = document.getElementById('login-message');
     const formMessage = document.getElementById('form-message');
 
+    // Datos de usuario administrador predefinido
+    const adminUsername = 'admin';
+    const adminPassword = 'admin';
+
     // Función para manejar el inicio de sesión
     if (loginForm) {
         loginForm.addEventListener('submit', function(event) {
@@ -12,10 +16,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-
-            // Datos de usuario administrador predefinido
-            const adminUsername = 'admin';
-            const adminPassword = 'password';
 
             fetch('users.txt')
                 .then(response => response.text())
@@ -44,6 +44,12 @@ document.addEventListener("DOMContentLoaded", function() {
             newField.type = 'text';
             newField.name = fieldName;
             newField.placeholder = fieldName;
+
+            // Guardar el campo en localStorage
+            let fields = JSON.parse(localStorage.getItem('fields')) || [];
+            fields.push(fieldName);
+            localStorage.setItem('fields', JSON.stringify(fields));
+
             userForm.appendChild(newField);
             formMessage.innerText = `Campo "${fieldName}" agregado.`;
         });
@@ -66,6 +72,16 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(() => formMessage.innerText = 'Respuestas guardadas.')
             .catch(() => formMessage.innerText = 'Error al guardar respuestas.');
+        });
+
+        // Recuperar los campos guardados del localStorage y agregarlos al formulario de usuario
+        const fields = JSON.parse(localStorage.getItem('fields')) || [];
+        fields.forEach(fieldName => {
+            const newField = document.createElement('input');
+            newField.type = 'text';
+            newField.name = fieldName;
+            newField.placeholder = fieldName;
+            userForm.insertBefore(newField, userForm.firstChild);
         });
     }
 });
