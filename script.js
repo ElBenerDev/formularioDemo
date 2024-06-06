@@ -2,11 +2,40 @@ document.addEventListener("DOMContentLoaded", function() {
     const loginForm = document.getElementById('login-form');
     const addFieldForm = document.getElementById('add-field-form');
     const userForm = document.getElementById('user-form');
+    const loginMessage = document.getElementById('login-message');
     const formMessage = document.getElementById('form-message');
     const responsesContainer = document.getElementById('responses-container');
     const fieldsContainer = document.getElementById('fields-container');
 
-    // Función para manejar la adición de campos en el formulario de administración
+    const adminUsername = 'admin';
+    const adminPassword = 'password';
+
+    // Función para manejar el inicio de sesión
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('users.txt')
+                .then(response => response.text())
+                .then(data => {
+                    const users = data.split('\n').map(line => line.trim().split(','));
+                    const user = users.find(u => u[0] === username && u[1] === password);
+
+                    if (username === adminUsername && password === adminPassword) {
+                        window.location.href = 'admin.html';
+                    } else if (user) {
+                        window.location.href = 'user.html';
+                    } else {
+                        loginMessage.innerText = 'Credenciales incorrectas';
+                    }
+                });
+        });
+    }
+
+    // Función para manejar la adición de campos en el formulario de admin
     if (addFieldForm) {
         addFieldForm.addEventListener('submit', function(event) {
             event.preventDefault();
@@ -37,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-        // Mostrar los campos activos al cargar la página de administración
+        // Mostrar los campos activos al cargar la página de admin
         const fields = JSON.parse(localStorage.getItem('fields')) || [];
         fields.forEach(fieldName => {
             const fieldItem = document.createElement('div');
@@ -85,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Función para mostrar las respuestas guardadas
     if (responsesContainer) {
-        fetch('responses.txt') 
+        fetch('responses.txt')
             .then(response => response.text())
             .then(data => {
                 const responses = data.split('\n\n');
