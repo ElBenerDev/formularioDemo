@@ -20,7 +20,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     const user = users.find(u => u[0] === username && u[1] === password);
 
                     if (user) {
-                        window.location.href = 'admin.html';
+                        if (username === 'admin') {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'user.html';
+                        }
                     } else {
                         loginMessage.innerText = 'Credenciales incorrectas';
                     }
