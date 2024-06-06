@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const loginMessage = document.getElementById('login-message');
     const formMessage = document.getElementById('form-message');
     const responsesContainer = document.getElementById('responses-container');
+    const fieldsContainer = document.getElementById('fields-container');
 
     const adminUsername = 'admin';
     const adminPassword = 'password';
@@ -54,9 +55,24 @@ document.addEventListener("DOMContentLoaded", function() {
                     userForm.appendChild(newField);
                 }
 
+                // Actualizar la lista de campos activos
+                const fieldItem = document.createElement('div');
+                fieldItem.classList.add('field-item');
+                fieldItem.innerText = fieldName;
+                fieldsContainer.appendChild(fieldItem);
+
                 formMessage.innerText = `Campo "${fieldName}" agregado.`;
                 document.getElementById('field-name').value = ''; // Clear input after adding
             }
+        });
+
+        // Mostrar los campos activos al cargar la página de admin
+        const fields = JSON.parse(localStorage.getItem('fields')) || [];
+        fields.forEach(fieldName => {
+            const fieldItem = document.createElement('div');
+            fieldItem.classList.add('field-item');
+            fieldItem.innerText = fieldName;
+            fieldsContainer.appendChild(fieldItem);
         });
     }
 
