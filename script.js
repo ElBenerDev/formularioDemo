@@ -13,18 +13,20 @@ document.addEventListener("DOMContentLoaded", function() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
+            // Datos de usuario administrador predefinido
+            const adminUsername = 'admin';
+            const adminPassword = 'password';
+
             fetch('users.txt')
                 .then(response => response.text())
                 .then(data => {
                     const users = data.split('\n').map(line => line.split(','));
                     const user = users.find(u => u[0] === username && u[1] === password);
 
-                    if (user) {
-                        if (username === 'admin') {
-                            window.location.href = 'admin.html';
-                        } else {
-                            window.location.href = 'user.html';
-                        }
+                    if (username === adminUsername && password === adminPassword) {
+                        window.location.href = 'admin.html';
+                    } else if (user) {
+                        window.location.href = 'user.html';
                     } else {
                         loginMessage.innerText = 'Credenciales incorrectas';
                     }
