@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const userForm = document.getElementById('user-form');
     const loginMessage = document.getElementById('login-message');
     const formMessage = document.getElementById('form-message');
+    const responsesContainer = document.getElementById('responses-container');
 
     // Datos de usuario administrador predefinido
     const adminUsername = 'admin';
@@ -83,5 +84,20 @@ document.addEventListener("DOMContentLoaded", function() {
             newField.placeholder = fieldName;
             userForm.insertBefore(newField, userForm.firstChild);
         });
+    }
+
+    // Función para mostrar las respuestas guardadas
+    if (responsesContainer) {
+        fetch('responses.txt')
+            .then(response => response.text())
+            .then(data => {
+                const responses = data.split('\n\n'); // Assuming that each response is separated by two newlines
+                responses.forEach(response => {
+                    const responseDiv = document.createElement('div');
+                    responseDiv.classList.add('response');
+                    responseDiv.innerText = response;
+                    responsesContainer.appendChild(responseDiv);
+                });
+            });
     }
 });
