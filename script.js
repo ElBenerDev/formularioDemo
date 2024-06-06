@@ -10,6 +10,17 @@ document.addEventListener("DOMContentLoaded", function() {
     const adminUsername = 'admin';
     const adminPassword = 'password';
 
+    // Cargar usuarios desde users.json
+    let users = [];
+    fetch('users.json')
+        .then(response => response.json())
+        .then(data => {
+            users = data;
+        })
+        .catch(error => {
+            console.error('Error al cargar usuarios:', error);
+        });
+
     // Función para manejar el inicio de sesión
     if (loginForm) {
         loginForm.addEventListener('submit', function(event) {
@@ -18,20 +29,15 @@ document.addEventListener("DOMContentLoaded", function() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            fetch('users.txt')
-                .then(response => response.text())
-                .then(data => {
-                    const users = data.split('\n').map(line => line.trim().split(','));
-                    const user = users.find(u => u[0] === username && u[1] === password);
+            const user = users.find(u => u.username === username && u.password === password);
 
-                    if (username === adminUsername && password === adminPassword) {
-                        window.location.href = 'admin.html';
-                    } else if (user) {
-                        window.location.href = 'user.html';
-                    } else {
-                        loginMessage.innerText = 'Credenciales incorrectas';
-                    }
-                });
+            if (username === adminUsername && password === adminPassword) {
+                window.location.href = 'admin.html';
+            } else if (user) {
+                window.location.href = 'user.html';
+            } else {
+                loginMessage.innerText = 'Credenciales incorrectas';
+            }
         });
     }
 
@@ -84,22 +90,12 @@ document.addEventListener("DOMContentLoaded", function() {
             const formData = new FormData(userForm);
             const entries = Array.from(formData.entries()).map(entry => `${entry[0]}: ${entry[1]}`).join('\n');
             
-            // Guardar las respuestas en el servidor (simulación)
-            fetch('save_responses.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams(entries).toString()
-            })
-            .then(response => {
-                if (response.ok) {
-                    formMessage.innerText = 'Respuestas guardadas.';
-                } else {
-                    formMessage.innerText = 'Error al guardar respuestas.';
-                }
-            })
-            .catch(() => formMessage.innerText = 'Error al guardar respuestas.');
+            // Guardar las respuestas en localStorage
+            let responses = JSON.parse(localStorage.getItem('responses')) || [];
+            responses.push(entries);
+            localStorage.setItem('responses', JSON.stringify(responses));
+
+            formMessage.innerText = 'Respuestas guardadas.';
         });
 
         const fields = JSON.parse(localStorage.getItem('fields')) || [];
@@ -114,16 +110,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Función para mostrar las respuestas guardadas
     if (responsesContainer) {
-        fetch('responses.txt')
-            .then(response => response.text())
-            .then(data => {
-                const responses = data.split('\n\n');
-                responses.forEach(response => {
-                    const responseDiv = document.createElement('div');
-                    responseDiv.classList.add('response');
-                    responseDiv.innerText = response;
-                    responsesContainer.appendChild(responseDiv);
-                });
-            });
+        const responses = JSON.parse(localStorage.getItem('responses')) || [];
+        responses.forEach(response => {
+            const responseDiv = document.createElement('div');
+            responseDiv.classList.add('response');
+            responseDiv.innerText = response;
+            responsesContainer.appendChild(responseDiv);
+        });
     }
 });
