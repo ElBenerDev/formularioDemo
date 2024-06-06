@@ -17,7 +17,7 @@ body {
     text-align: center;
 }
 
-h1 {
+h1, h2 {
     margin-bottom: 20px;
 }
 
@@ -43,4 +43,12 @@ button:hover {
 #login-message, #form-message {
     color: red;
     margin-top: 15px;
+}
+
+.response, .field-item {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 5px;
 }
